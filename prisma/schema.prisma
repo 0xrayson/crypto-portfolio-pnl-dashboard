@@ -1,0 +1,185 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Ecosystem {
+  EVM
+  SOLANA
+}
+
+enum Chain {
+  ETHEREUM
+  POLYGON
+  ARBITRUM
+  OPTIMISM
+  BASE
+  SOLANA
+}
+
+enum TxDirection {
+  IN
+  OUT
+  SELF
+}
+
+enum TxType {
+  TRANSFER
+  SWAP
+  MINT
+  BURN
+  APPROVAL
+  CONTRACT_CALL
+  UNKNOWN
+}
+
+enum SnapshotSource {
+  SEEDED_MOCK
+  COMPUTED
+}
+
+/// Reserved for a future wallet-signature auth layer (SIWE/SIWS). Not used in v1 —
+/// a connected address is sufficient identity for viewing the dashboard.
+model User {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  wallets   Wallet[]
+}
+
+model Wallet {
+  id         String    @id @default(cuid())
+  userId     String?
+  user       User?     @relation(fields: [userId], references: [id])
+  ecosystem  Ecosystem
+  address    String
+  label      String?
+  isPrimary  Boolean   @default(false)
+  verifiedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  balances     TokenBalance[]
+  transactions Transaction[]
+  snapshots    PortfolioSnapshot[]
+
+  @@unique([ecosystem, address])
+  @@index([userId])
+}
+
+model Token {
+  id          String  @id @default(cuid())
+  chain       Chain
+  address     String // "native" sentinel for ETH/MATIC/SOL/etc.
+  symbol      String
+  name        String
+  decimals    Int
+  logoUrl     String?
+  coingeckoId String?
+  isNative    Boolean @default(false)
+
+  balances         TokenBalance[]
+  balanceSnapshots TokenBalanceSnapshot[]
+  transactions     Transaction[]
+  priceHistory     TokenPriceHistory[]
+  currentPrice     TokenPrice?
+
+  @@unique([chain, address])
+}
+
+/// Current balance cache per wallet+token. Short TTL, re-fetched from
+/// Alchemy when `fetchedAt` is stale or the user requests a manual refresh.
+model TokenBalance {
+  id        String   @id @default(cuid())
+  walletId  String
+  wallet    Wallet   @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  tokenId   String
+  token     Token    @relation(fields: [tokenId], references: [id])
+  chain     Chain
+  balance   Decimal  @db.Decimal(38, 18)
+  usdValue  Decimal  @db.Decimal(38, 18)
+  fetchedAt DateTime @default(now())
+
+  @@unique([walletId, tokenId])
+  @@index([walletId])
+}
+
+/// Powers the portfolio-value-over-time and PnL-over-time charts. `source`
+/// distinguishes seeded/mock rows from future real cost-basis computations
+/// so the UI can render an explicit "Simulated" badge.
+model PortfolioSnapshot {
+  id               String         @id @default(cuid())
+  walletId         String
+  wallet           Wallet         @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  capturedAt       DateTime
+  totalUsdValue    Decimal        @db.Decimal(38, 18)
+  realizedPnlUsd   Decimal        @db.Decimal(38, 18)
+  unrealizedPnlUsd Decimal        @db.Decimal(38, 18)
+  source           SnapshotSource @default(SEEDED_MOCK)
+
+  tokenBreakdown TokenBalanceSnapshot[]
+
+  @@index([walletId, capturedAt])
+}
+
+model TokenBalanceSnapshot {
+  id                  String            @id @default(cuid())
+  portfolioSnapshotId String
+  snapshot            PortfolioSnapshot @relation(fields: [portfolioSnapshotId], references: [id], onDelete: Cascade)
+  tokenId             String
+  token                Token             @relation(fields: [tokenId], references: [id])
+  quantity            Decimal           @db.Decimal(38, 18)
+  usdValue            Decimal           @db.Decimal(38, 18)
+
+  @@index([portfolioSnapshotId])
+}
+
+/// `amountUsdAtTx` / `feeUsdAtTx` are captured now so a future cost-basis /
+/// PnL engine can compute realized/unrealized PnL without re-ingesting history.
+model Transaction {
+  id                  String      @id @default(cuid())
+  walletId            String
+  wallet              Wallet      @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  chain               Chain
+  txHash              String
+  logIndex            Int?
+  blockTimestamp      DateTime
+  direction           TxDirection
+  type                TxType
+  tokenId             String?
+  token               Token?      @relation(fields: [tokenId], references: [id])
+  amount              Decimal     @db.Decimal(38, 18)
+  amountUsdAtTx       Decimal?    @db.Decimal(38, 18)
+  feeAmount           Decimal?    @db.Decimal(38, 18)
+  feeUsdAtTx          Decimal?    @db.Decimal(38, 18)
+  counterpartyAddress String?
+  rawMetadata         Json?
+  createdAt           DateTime    @default(now())
+
+  @@unique([chain, txHash, walletId, logIndex])
+  @@index([walletId, blockTimestamp])
+}
+
+/// Current price cache, short TTL, batched from CoinGecko `/simple/price`.
+model TokenPrice {
+  id       String   @id @default(cuid())
+  tokenId  String   @unique
+  token    Token    @relation(fields: [tokenId], references: [id])
+  currency String   @default("usd")
+  price    Decimal  @db.Decimal(38, 18)
+  asOf     DateTime
+}
+
+/// Daily price history, immutable once written for a given (token, date) —
+/// cached forever, only missing date ranges are fetched from CoinGecko.
+model TokenPriceHistory {
+  id       String   @id @default(cuid())
+  tokenId  String
+  token    Token    @relation(fields: [tokenId], references: [id])
+  currency String   @default("usd")
+  date     DateTime @db.Date
+  price    Decimal  @db.Decimal(38, 18)
+
+  @@unique([tokenId, currency, date])
+}

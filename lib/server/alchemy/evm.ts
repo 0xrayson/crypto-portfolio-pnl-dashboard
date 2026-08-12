@@ -53,8 +53,29 @@ export async function getEvmTokenBalances(chain: EvmChain, address: string): Pro
   return [native, ...erc20Balances];
 }
 
+export interface RawEvmTokenMetadata {
+  decimals: number | null;
+  symbol: string | null;
+  name: string | null;
+  logo: string | null;
+}
+
+/**
+ * Reads a token's symbol/name/decimals directly from Alchemy's on-chain
+ * indexing. Unlike a transfer's `asset` field (often null) or a CoinGecko
+ * lookup (fails for tokens too new/obscure to be listed), this works for any
+ * contract that implements the standard metadata calls — including
+ * brand-new memecoins with no CoinGecko listing yet.
+ */
+export async function getEvmTokenMetadata(chain: EvmChain, contractAddress: string): Promise<RawEvmTokenMetadata> {
+  const alchemy = getAlchemyClient(chain);
+  const metadata = await alchemy.core.getTokenMetadata(contractAddress);
+  return { decimals: metadata.decimals, symbol: metadata.symbol, name: metadata.name, logo: metadata.logo };
+}
+
 export interface RawEvmTransfer {
   hash: string;
+  uniqueId: string;
   from: string;
   to: string | null;
   value: number | null;

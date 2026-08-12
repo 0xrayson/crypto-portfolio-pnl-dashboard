@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSnapshots } from "@/lib/server/portfolio/getSnapshots";
+import { refreshTransactions } from "@/lib/server/portfolio/getTransactions";
+import { getPortfolioPnl } from "@/lib/server/portfolio/getPortfolioPnl";
 import { parseEcosystem } from "@/lib/server/api/ecosystem";
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ ecosystem: string; address: string }> }) {
@@ -10,8 +11,9 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ eco
   }
 
   try {
-    const snapshots = await getSnapshots(ecosystem, address);
-    return NextResponse.json({ snapshots });
+    await refreshTransactions(ecosystem, address);
+    const pnl = await getPortfolioPnl(ecosystem, address);
+    return NextResponse.json(pnl);
   } catch (err) {
     return NextResponse.json({ error: (err as Error).message }, { status: 502 });
   }

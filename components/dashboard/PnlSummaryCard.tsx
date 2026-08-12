@@ -8,6 +8,7 @@ interface Props {
   unrealizedPnlUsd: number;
   source: "SEEDED_MOCK" | "COMPUTED";
   isLoading: boolean;
+  hasUntrackedHoldings?: boolean;
 }
 
 function PnlValue({ value }: { value: number }) {
@@ -19,7 +20,7 @@ function PnlValue({ value }: { value: number }) {
   );
 }
 
-export function PnlSummaryCard({ realizedPnlUsd, unrealizedPnlUsd, source, isLoading }: Props) {
+export function PnlSummaryCard({ realizedPnlUsd, unrealizedPnlUsd, source, isLoading, hasUntrackedHoldings }: Props) {
   return (
     <Card>
       <CardHeader className="flex items-center justify-between">
@@ -34,16 +35,23 @@ export function PnlSummaryCard({ realizedPnlUsd, unrealizedPnlUsd, source, isLoa
         {isLoading ? (
           <div className="bg-muted h-9 w-40 animate-pulse rounded" />
         ) : (
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <p className="text-muted-foreground text-xs">Realized</p>
-              <PnlValue value={realizedPnlUsd} />
+          <>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-muted-foreground text-xs">Realized</p>
+                <PnlValue value={realizedPnlUsd} />
+              </div>
+              <div>
+                <p className="text-muted-foreground text-xs">Unrealized</p>
+                <PnlValue value={unrealizedPnlUsd} />
+              </div>
             </div>
-            <div>
-              <p className="text-muted-foreground text-xs">Unrealized</p>
-              <PnlValue value={unrealizedPnlUsd} />
-            </div>
-          </div>
+            {hasUntrackedHoldings && (
+              <p className="text-muted-foreground mt-3 text-[11px]">
+                Some holdings were acquired outside a tracked swap, so unrealized PnL only reflects the portion with a known cost basis.
+              </p>
+            )}
+          </>
         )}
       </CardContent>
     </Card>

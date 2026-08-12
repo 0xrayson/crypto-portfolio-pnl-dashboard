@@ -5,9 +5,10 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 const LINKS = [
-  { href: "/", label: "Overview" },
-  { href: "/tokens", label: "Tokens" },
-  { href: "/transactions", label: "Transactions" },
+  { href: "/dashboard", label: "Overview" },
+  { href: "/dashboard/tokens", label: "Tokens" },
+  { href: "/dashboard/transactions", label: "Transactions" },
+  { href: "/dashboard/portfolio", label: "Portfolio" },
 ];
 
 export function DashboardNav() {

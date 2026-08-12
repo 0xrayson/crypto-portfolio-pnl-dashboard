@@ -4,6 +4,7 @@ import { getSolanaTokenBalances } from "@/lib/server/alchemy/solana";
 import { getCurrentPrices } from "@/lib/server/coingecko/prices";
 import { getOrCreateWallet } from "./wallet";
 import { upsertToken } from "./tokens";
+import { mapWithConcurrency } from "@/lib/server/concurrency";
 import { EVM_CHAINS } from "@/lib/constants";
 import type { ChainName } from "@/lib/constants";
 import type { Ecosystem } from "@/types/wallet";
@@ -61,18 +62,22 @@ export async function getBalances(ecosystem: Ecosystem, address: string): Promis
   const wallet = await getOrCreateWallet(ecosystem, address);
   const raw = (await fetchRawBalances(ecosystem, address)).filter((b) => BigInt(b.rawBalance) > 0n);
 
-  const withTokens = await Promise.all(
-    raw.map(async (r) => {
-      const token = await upsertToken(r.chain, r);
-      const decimals = r.decimals ?? token.decimals;
-      const humanBalance = Number(r.rawBalance) / 10 ** decimals;
-      return { token, chain: r.chain, humanBalance };
-    })
-  );
+  // Concurrency-limited: upsertToken hits CoinGecko's contract-lookup endpoint
+  // for any token seen for the first time, and firing all of them at once
+  // reliably blows through CoinGecko's free-tier rate limit on wallets that
+  // hold many distinct tokens.
+  const withTokens = await mapWithConcurrency(raw, 5, async (r) => {
+    const token = await upsertToken(r.chain, r);
+    const decimals = r.decimals ?? token.decimals;
+    const humanBalance = Number(r.rawBalance) / 10 ** decimals;
+    return { token, chain: r.chain, humanBalance };
+  });
 
   const nonZero = withTokens.filter((t) => t.humanBalance > 0);
   const coingeckoIds = nonZero.map((t) => t.token.coingeckoId).filter((id): id is string => Boolean(id));
-  const prices = await getCurrentPrices(coingeckoIds);
+  // Balances are the primary data here — a CoinGecko outage/rate-limit should
+  // degrade to zeroed-out prices, not fail the whole balances response.
+  const prices = await getCurrentPrices(coingeckoIds).catch(() => []);
   const priceById = new Map(prices.map((p) => [p.coingeckoId, p]));
 
   const views = await Promise.all(

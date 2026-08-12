@@ -14,7 +14,7 @@ export default function TransactionsPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-6 sm:px-6">
-      <Card>
+      <Card className="motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-2 duration-500">
         <CardHeader>
           <CardTitle className="text-sm font-medium">Transactions</CardTitle>
         </CardHeader>
@@ -24,7 +24,7 @@ export default function TransactionsPage() {
           ) : isLoading ? (
             <div className="bg-muted h-96 w-full animate-pulse rounded" />
           ) : (
-            <Tabs defaultValue="table">
+            <Tabs defaultValue="table" className="motion-safe:animate-in motion-safe:fade-in duration-300">
               <TabsList>
                 <TabsTrigger value="table">Table</TabsTrigger>
                 <TabsTrigger value="feed">Feed</TabsTrigger>

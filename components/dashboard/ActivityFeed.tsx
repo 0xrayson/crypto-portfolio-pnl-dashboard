@@ -6,6 +6,9 @@ import type { TransactionView } from "@/types/portfolio";
 function describe(tx: TransactionView): string {
   const symbol = tx.token?.symbol ?? "tokens";
   const amount = formatTokenAmount(tx.amount);
+  if (tx.type === "SWAP") {
+    return tx.direction === "IN" ? `Swapped into ${amount} ${symbol}` : `Swapped out ${amount} ${symbol}`;
+  }
   if (tx.direction === "IN") return `Received ${amount} ${symbol}`;
   if (tx.direction === "OUT") return `Sent ${amount} ${symbol}`;
   return `Moved ${amount} ${symbol}`;

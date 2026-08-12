@@ -1,8 +1,9 @@
 /**
  * Generates a deterministic-looking but randomized daily portfolio history.
- * Used only by prisma/seed.ts and as a fallback in getSnapshots.ts until the
- * real cost-basis/PnL engine replaces it. Every row it produces is written
- * with `source: "SEEDED_MOCK"` so the UI can flag it explicitly.
+ * Used only by prisma/seed.ts to seed demo PortfolioSnapshot rows — the
+ * Overview page itself now sources real PnL/value history from the swap
+ * engine and transaction-based value reconstruction instead of this table.
+ * Every row it produces is written with `source: "SEEDED_MOCK"`.
  */
 export interface MockSnapshotPoint {
   capturedAt: Date;

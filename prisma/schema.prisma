@@ -143,7 +143,11 @@ model Transaction {
   wallet              Wallet      @relation(fields: [walletId], references: [id], onDelete: Cascade)
   chain               Chain
   txHash              String
-  logIndex            Int?
+  /// Distinguishes multiple legs of one tx (e.g. both sides of a swap): the
+  /// EVM asset-transfer's own `uniqueId`, or a synthetic "native"/"spl:<mint>"
+  /// tag on Solana. Never a bare index — that previously caused multi-leg
+  /// transactions to collide and silently drop all but one leg.
+  legId               String      @default("0")
   blockTimestamp      DateTime
   direction           TxDirection
   type                TxType
@@ -157,7 +161,7 @@ model Transaction {
   rawMetadata         Json?
   createdAt           DateTime    @default(now())
 
-  @@unique([chain, txHash, walletId, logIndex])
+  @@unique([chain, txHash, walletId, legId])
   @@index([walletId, blockTimestamp])
 }
 

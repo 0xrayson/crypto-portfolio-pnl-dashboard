@@ -8,6 +8,7 @@ import { truncateAddress } from "@/lib/format";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -33,17 +34,19 @@ export function WalletSwitcher() {
         {truncateAddress(wallet.address)}
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-64">
-        <DropdownMenuLabel className="text-muted-foreground text-xs font-normal">
-          {label}
-        </DropdownMenuLabel>
-        {connected.map((w) => (
-          <DropdownMenuItem key={`${w.ecosystem}:${w.address}`} onClick={() => setWallet(w)}>
-            <span className="flex-1 truncate font-mono text-xs">{truncateAddress(w.address, 6)}</span>
-            {w.ecosystem === wallet.ecosystem && w.address === wallet.address ? (
-              <span className="text-xs text-emerald-500">Active</span>
-            ) : null}
-          </DropdownMenuItem>
-        ))}
+        <DropdownMenuGroup>
+          <DropdownMenuLabel className="text-muted-foreground text-xs font-normal">
+            {label}
+          </DropdownMenuLabel>
+          {connected.map((w) => (
+            <DropdownMenuItem key={`${w.ecosystem}:${w.address}`} onClick={() => setWallet(w)}>
+              <span className="flex-1 truncate font-mono text-xs">{truncateAddress(w.address, 6)}</span>
+              {w.ecosystem === wallet.ecosystem && w.address === wallet.address ? (
+                <span className="text-xs text-emerald-500">Active</span>
+              ) : null}
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem
           variant="destructive"

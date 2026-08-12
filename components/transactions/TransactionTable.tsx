@@ -10,6 +10,18 @@ const DIRECTION_STYLE: Record<TransactionView["direction"], string> = {
   SELF: "text-muted-foreground",
 };
 
+function typeLabel(tx: TransactionView): string {
+  if (tx.type === "SWAP") return "Swap";
+  if (tx.direction === "IN") return "Received";
+  if (tx.direction === "OUT") return "Sent";
+  return "Self";
+}
+
+function typeStyle(tx: TransactionView): string {
+  if (tx.type === "SWAP") return "text-violet-500";
+  return DIRECTION_STYLE[tx.direction];
+}
+
 export function TransactionTable({ transactions }: { transactions: TransactionView[] }) {
   if (transactions.length === 0) {
     return <p className="text-muted-foreground py-12 text-center text-sm">No transactions found for this wallet.</p>;
@@ -34,8 +46,8 @@ export function TransactionTable({ transactions }: { transactions: TransactionVi
               {new Date(tx.blockTimestamp).toLocaleString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
             </TableCell>
             <TableCell>
-              <Badge variant="outline" className={DIRECTION_STYLE[tx.direction]}>
-                {tx.direction === "IN" ? "Received" : tx.direction === "OUT" ? "Sent" : "Self"}
+              <Badge variant="outline" className={typeStyle(tx)}>
+                {typeLabel(tx)}
               </Badge>
             </TableCell>
             <TableCell className="text-muted-foreground text-xs">{CHAIN_LABELS[tx.chain]}</TableCell>

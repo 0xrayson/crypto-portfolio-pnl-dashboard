@@ -124,10 +124,10 @@ export default function HomePage() {
               </Button>
             </div>
           </div>
-          <div className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl sm:aspect-[5/4]">
+          <div className="relative aspect-[1280/697] w-full overflow-hidden rounded-2xl">
             <Image
-              src="https://picsum.photos/seed/tradermonitors/1200/1200"
-              alt="Multiple monitors showing market charts on a trading desk"
+              src="/preview.jpg"
+              alt="The Retrace dashboard showing portfolio value, profit and loss, and recent activity"
               fill
               priority
               sizes="(min-width: 1024px) 480px, 100vw"

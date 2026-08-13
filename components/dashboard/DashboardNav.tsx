@@ -11,11 +11,11 @@ const LINKS = [
   { href: "/dashboard/portfolio", label: "Portfolio" },
 ];
 
-export function DashboardNav() {
+export function DashboardNav({ className }: { className?: string }) {
   const pathname = usePathname();
 
   return (
-    <nav className="flex items-center gap-1">
+    <nav className={cn("flex items-center gap-1 overflow-x-auto", className)}>
       {LINKS.map((link) => {
         const active = pathname === link.href;
         return (
@@ -23,7 +23,7 @@ export function DashboardNav() {
             key={link.href}
             href={link.href}
             className={cn(
-              "rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
+              "shrink-0 rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
               active ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground"
             )}
           >

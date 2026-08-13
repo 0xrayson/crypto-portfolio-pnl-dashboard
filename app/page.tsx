@@ -126,12 +126,20 @@ export default function HomePage() {
           </div>
           <div className="relative aspect-[1280/697] w-full overflow-hidden rounded-2xl">
             <Image
+              src="/previewlight.jpg"
+              alt="The Retrace dashboard showing portfolio value, profit and loss, and recent activity"
+              fill
+              priority
+              sizes="(min-width: 1024px) 480px, 100vw"
+              className="object-cover dark:hidden"
+            />
+            <Image
               src="/preview.jpg"
               alt="The Retrace dashboard showing portfolio value, profit and loss, and recent activity"
               fill
               priority
               sizes="(min-width: 1024px) 480px, 100vw"
-              className="object-cover"
+              className="hidden object-cover dark:block"
             />
           </div>
         </section>

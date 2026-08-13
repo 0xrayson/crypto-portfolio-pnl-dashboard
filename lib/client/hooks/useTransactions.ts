@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { fetchJsonOrThrow } from "@/lib/client/fetchJson";
 import type { ActiveWallet } from "@/types/wallet";
 import type { TransactionView } from "@/types/portfolio";
 
@@ -6,9 +7,9 @@ export function useTransactions(wallet: ActiveWallet | null) {
   return useQuery({
     queryKey: ["transactions", wallet?.ecosystem, wallet?.address],
     queryFn: async (): Promise<TransactionView[]> => {
-      const res = await fetch(`/api/wallets/${wallet!.ecosystem}/${wallet!.address}/transactions`);
-      if (!res.ok) throw new Error("Failed to load transactions");
-      const data = await res.json();
+      const data = await fetchJsonOrThrow<{ transactions: TransactionView[] }>(
+        `/api/wallets/${wallet!.ecosystem}/${wallet!.address}/transactions`
+      );
       return data.transactions;
     },
     enabled: Boolean(wallet),

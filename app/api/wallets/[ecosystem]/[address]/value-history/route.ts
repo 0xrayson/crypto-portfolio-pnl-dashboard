@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { refreshTransactions } from "@/lib/server/portfolio/getTransactions";
 import { getValueHistory } from "@/lib/server/portfolio/getValueHistory";
+
+// Refreshes transactions + reconstructs daily balances against historical
+// prices; a cold serverless instance can exceed Vercel's default execution limit.
+export const maxDuration = 60;
 import { parseEcosystem } from "@/lib/server/api/ecosystem";
 
 const ALLOWED_DAYS = new Set([7, 30, 90]);

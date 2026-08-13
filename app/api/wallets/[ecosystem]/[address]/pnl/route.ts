@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { refreshTransactions } from "@/lib/server/portfolio/getTransactions";
 import { getPortfolioPnl } from "@/lib/server/portfolio/getPortfolioPnl";
+
+// Refreshes transactions + fetches balances (5 chains + CoinGecko each); a
+// cold serverless instance can exceed Vercel's default execution limit.
+export const maxDuration = 60;
 import { parseEcosystem } from "@/lib/server/api/ecosystem";
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ ecosystem: string; address: string }> }) {

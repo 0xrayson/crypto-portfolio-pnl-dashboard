@@ -279,13 +279,20 @@ export default function HomePage() {
         {/* 7. Security , media and text split */}
         <section className="border-t border-border/70">
           <div className="mx-auto grid w-full max-w-6xl items-center gap-12 px-4 py-20 sm:px-6 md:grid-cols-2">
-            <Reveal className="relative aspect-[4/5] w-full overflow-hidden rounded-2xl">
+            <Reveal className="relative aspect-square w-full overflow-hidden rounded-2xl">
               <Image
-                src="https://picsum.photos/seed/walletsecurity/900/1100"
-                alt="Close up of a metal padlock against a dark background"
+                src="/shield_green_bright.png"
+                alt="A green shield with a checkmark, representing wallet security"
                 fill
                 sizes="(min-width: 768px) 420px, 100vw"
-                className="object-cover"
+                className="object-cover dark:hidden"
+              />
+              <Image
+                src="/shield_green_dark.jpg"
+                alt="A green shield with a checkmark, representing wallet security"
+                fill
+                sizes="(min-width: 768px) 420px, 100vw"
+                className="hidden object-cover dark:block"
               />
             </Reveal>
             <Reveal delay={80} className="flex flex-col gap-5">

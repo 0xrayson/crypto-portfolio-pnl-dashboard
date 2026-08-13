@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Crypto Portfolio & PnL Dashboard",
+  title: "Retrace",
   description: "Connect a wallet to track balances, PnL, and activity across chains.",
 };
 

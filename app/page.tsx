@@ -19,7 +19,7 @@ import { LivePreviewChart } from "./_components/LivePreviewChart";
 import { ChainMarquee } from "./_components/ChainMarquee";
 
 export const metadata: Metadata = {
-  title: "Portfolio Track, Crypto Portfolio & PnL",
+  title: "Retrace — Track your crypto portfolio",
   description: "Connect a wallet and watch balances, profit and loss, and activity update across every chain you hold.",
 };
 
@@ -71,7 +71,7 @@ export default function HomePage() {
       <header className="sticky top-0 z-20 border-b border-border/70 bg-background/80 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
           <Link href="/" className="text-sm font-semibold tracking-tight">
-            Crypto Portfolio & PnL
+            Retrace
           </Link>
           <nav className="hidden items-center gap-8 text-sm text-muted-foreground sm:flex">
             <a href="#capabilities" className="transition-colors hover:text-foreground">
@@ -357,7 +357,7 @@ export default function HomePage() {
 
       <footer className="border-t border-border/70">
         <div className="mx-auto flex w-full max-w-6xl flex-col items-center gap-4 px-4 py-8 text-sm text-muted-foreground sm:flex-row sm:justify-between sm:px-6">
-          <span className="font-medium text-foreground">Crypto Portfolio & PnL</span>
+          <span className="font-medium text-foreground">Retrace</span>
           <nav className="flex items-center gap-6">
             <a href="#capabilities" className="transition-colors hover:text-foreground">
               Capabilities
@@ -369,7 +369,7 @@ export default function HomePage() {
               Open tracker
             </Link>
           </nav>
-          <span>Crypto Portfolio & PnL, 2026</span>
+          <span>Retrace, 2026</span>
         </div>
       </footer>
     </div>

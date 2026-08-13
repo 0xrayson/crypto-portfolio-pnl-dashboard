@@ -15,7 +15,7 @@ function alchemyRpc(subdomain: string) {
 const WALLETCONNECT_PLACEHOLDER = "00000000000000000000000000000000";
 
 export const wagmiConfig = getDefaultConfig({
-  appName: "Crypto Portfolio & PnL Dashboard",
+  appName: "Retrace",
   projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || WALLETCONNECT_PLACEHOLDER,
   chains: [mainnet, polygon, arbitrum, optimism, base],
   transports: {

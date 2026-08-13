@@ -216,7 +216,14 @@ export default function HomePage() {
                   alt="A ring of coins, each engraved with a different chain symbol"
                   fill
                   sizes="(min-width: 1024px) 240px, 100vw"
-                  className="object-cover"
+                  className="object-cover dark:hidden"
+                />
+                <Image
+                  src="/multichaindark.jpg"
+                  alt="A ring of coins, each engraved with a different chain symbol"
+                  fill
+                  sizes="(min-width: 1024px) 240px, 100vw"
+                  className="hidden object-cover dark:block"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
                 <span className="absolute bottom-4 left-4 text-lg font-medium text-white">Multi chain by default</span>

@@ -204,8 +204,8 @@ export default function HomePage() {
             <Reveal delay={140} className="lg:col-span-1 lg:row-span-1">
               <div className="relative h-full min-h-48 overflow-hidden rounded-2xl border border-border/70">
                 <Image
-                  src="https://picsum.photos/seed/chainnetwork/800/800"
-                  alt="Abstract network of connected nodes"
+                  src="/multichain.jpg"
+                  alt="A ring of coins, each engraved with a different chain symbol"
                   fill
                   sizes="(min-width: 1024px) 240px, 100vw"
                   className="object-cover"

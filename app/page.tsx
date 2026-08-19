@@ -145,7 +145,7 @@ export default function HomePage() {
         </section>
 
         {/* 2. Chain trust marquee */}
-        <section aria-label="Supported chains" className="border-y border-border/70 bg-muted/20">
+        <section aria-label="Supported chains" className="bg-muted/20">
           <Reveal>
             <ChainMarquee />
           </Reveal>
